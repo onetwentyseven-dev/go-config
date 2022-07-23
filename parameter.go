@@ -9,6 +9,7 @@ import (
 const (
 	defaultTag  = "default"
 	requiredTag = "required"
+	ignoreTag   = "ignore"
 )
 
 // Parameter represents an individual parameter, used for handling by remote sources

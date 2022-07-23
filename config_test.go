@@ -29,11 +29,14 @@ func TestProcess(t *testing.T) {
 			TestEnvInt      int           `env:"TEST_ENV_INT" required:"true"`
 			TestEnvBool     bool          `env:"TEST_ENV_BOOL" required:"true"`
 			TestDuration    time.Duration `env:"TEST_DURATION" default:"10s"`
+			TestTrueIgnore  int           `ignore:"true"`
+			TestFalseIgnore int           `env:"TEST_FALSE_IGNORE"`
 		}{},
 		envvars: map[string]string{
-			"TEST_ENV_STR":  "test env string",
-			"TEST_ENV_INT":  "43",
-			"TEST_ENV_BOOL": "1",
+			"TEST_ENV_STR":      "test env string",
+			"TEST_ENV_INT":      "43",
+			"TEST_ENV_BOOL":     "1",
+			"TEST_FALSE_IGNORE": "1",
 		},
 
 		expectedData: map[string]interface{}{
@@ -44,6 +47,8 @@ func TestProcess(t *testing.T) {
 			"TestEnvInt":      43,
 			"TestEnvBool":     true,
 			"TestDuration":    time.Duration(10 * time.Second),
+			"TestTrueIgnore":  0,
+			"TestFalseIgnore": 1,
 		},
 	}, {
 		name: "DefaultEnvSource_Err",

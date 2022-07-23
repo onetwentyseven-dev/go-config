@@ -49,13 +49,22 @@ func process(params interface{}, paramMap map[string]map[string][]Parameter, sou
 			continue
 		}
 
-		setFn, err := getSetter(field)
-		if err != nil {
-			errs = multierror.Append(errs, fmt.Errorf("error getting set function"))
-			continue
+		sf := typeOf.Elem().Field(i)
+		ignoreValue, ok := sf.Tag.Lookup(ignoreTag)
+		if ok {
+			ignoreValueBool, err := strconv.ParseBool(ignoreValue)
+			if err == nil {
+				if ignoreValueBool {
+					continue
+				}
+			}
 		}
 
-		sf := typeOf.Elem().Field(i)
+		setFn, err := getSetter(field)
+		if err != nil {
+			errs = multierror.Append(errs, fmt.Errorf("error getting set function: %w", err))
+			continue
+		}
 
 		var foundHandler bool
 
@@ -130,7 +139,7 @@ func Process(params interface{}, sources ...Source) error {
 		sources = append(sources, &EnvSource{})
 	}
 
-	paramMap := make(map[string]map[string][]Parameter, len(sources))
+	paramMap := make(map[string]map[string][]Parameter)
 	sourceKeys := make([]string, len(sources))
 
 	for i, s := range sources {

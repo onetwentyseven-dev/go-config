@@ -2,6 +2,7 @@ package config
 
 import (
 	"errors"
+	"fmt"
 	"reflect"
 	"strconv"
 	"strings"
@@ -32,7 +33,7 @@ func getSetter(f reflect.Value) (setter, error) {
 	case reflect.Slice:
 		return sliceSetter(f, typ), nil
 	default:
-		return nil, ErrUnsupportedType
+		return nil, fmt.Errorf("unsupported type configuration %T was passed in", typ.Kind().String())
 	}
 }
 
